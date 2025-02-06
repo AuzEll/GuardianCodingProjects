@@ -29,9 +29,21 @@ function shuffle(deck) {
     return deck;
 }
 
-function pickUpFromDeck(deck, hands, playerIndex) {
-    if (Object.keys(deck).length > 0) Object.values(hands)[playerIndex].push(deck.splice(0, 1));
+function pickUpFromDeck(deck, hands, player) {
+    if (Object.keys(deck).length > 0) hands[player].push(deck.splice(0, 1)[0]);
     else console.log("There are no cards left in the deck!");
+}
+
+function checkHandScore(hand) {
+    var score = 0;
+
+    for (var i = 0; i < hand.length; i++) {
+        var cardValue = hand[i].split(" ")[0];
+
+        if (cardValue in twentyOneFaceCardValue) score += twentyOneFaceCardValue[cardValue];
+        else score += parseInt(cardValue);
+    }
+    return score;
 }
 
 function match(deck, players) {
@@ -43,12 +55,57 @@ function match(deck, players) {
     for (var i = 0; i < players.length; i++) {
         hands[players[i]] = [];
 
-        pickUpFromDeck(deck, hands, i);
-        pickUpFromDeck(deck, hands, i);
+        pickUpFromDeck(deck, hands, Object.keys(hands)[i]);
+        pickUpFromDeck(deck, hands, Object.keys(hands)[i]);
     }
 
     console.log(Object.keys(deck).length);
     console.log(hands);
+    //console.log(checkHandScore(hands["Sam"]));
+
+    // var dealerIndex = hands.findIndex(function (hand) {
+    //     return hand.key == "Dealer"
+    // });
+    // console.log(dealerIndex);
+    var winners = [];
+    for (const [key, value] of Object.entries(hands)) {
+        if (checkHandScore(value) == 21) winners.push(key);
+        if (checkHandScore(value) > 21) delete hands[key];
+    }
+
+    var handsLeft = Object.keys(hands).length;
+    //while (Object.keys(hands).length > 1 && winners.length == 0) {
+    //handsLeft = Object.keys(hands).length;
+
+    for (const [key, value] of Object.entries(hands)) {
+        //for 
+        if (key != "Dealer") {
+            while (checkHandScore(value) < 17) pickUpFromDeck(deck, hands, key);
+            console.log(key);
+            console.log(hands[key]);
+        }
+        else {
+            var competingPlayer = players[Math.floor(Math.random() * players.length)];
+            while (competingPlayer == "Dealer" || !(competingPlayer in hands)) competingPlayer = players[Math.floor(Math.random() * players.length)];
+
+            while (checkHandScore(value) <= checkHandScore(hands[competingPlayer])) pickUpFromDeck(deck, hands, key);
+            console.log(key);
+            console.log(hands[key]);
+        }
+
+        //if (checkHandScore(value) == 21) winners.push(key);
+        //if (checkHandScore(value) > 21) delete hands[key];
+        if (checkHandScore(value) == 21) {
+            winners.push(key);
+            break;
+        }
+        if (checkHandScore(value) > 21) delete hands[key];
+        if (Object.entries(hands).length < 2) break;
+    }
+
+    console.log(winners);
+    //}
+
 }
 
 match(deck, players);
