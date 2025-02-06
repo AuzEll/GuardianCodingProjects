@@ -47,6 +47,8 @@ function checkHandScore(hand) {
 }
 
 function match(deck, players) {
+    players.push(players.splice(players.indexOf("Dealer"), 1)[0]); // Moves Dealer to end of player list
+
     // Shuffle the deck
     var remainingDeck = shuffle(deck);
 
@@ -55,30 +57,26 @@ function match(deck, players) {
     for (var i = 0; i < players.length; i++) {
         hands[players[i]] = [];
 
-        pickUpFromDeck(deck, hands, Object.keys(hands)[i]);
+        pickUpFromDeck(deck, hands, Object.keys(hands)[i]); // Each payer picks up two cards
         pickUpFromDeck(deck, hands, Object.keys(hands)[i]);
     }
 
     console.log(Object.keys(deck).length);
     console.log(hands);
-    //console.log(checkHandScore(hands["Sam"]));
 
-    // var dealerIndex = hands.findIndex(function (hand) {
-    //     return hand.key == "Dealer"
-    // });
-    // console.log(dealerIndex);
+    // Initial check with opening hand
     var winners = [];
+    var maxValue = 0;
     for (const [key, value] of Object.entries(hands)) {
+        if (checkHandScore(value) > maxValue && checkHandScore(value) <= 21) maxValue = checkHandScore(value);
         if (checkHandScore(value) == 21) winners.push(key);
         if (checkHandScore(value) > 21) delete hands[key];
     }
 
-    var handsLeft = Object.keys(hands).length;
-    //while (Object.keys(hands).length > 1 && winners.length == 0) {
-    //handsLeft = Object.keys(hands).length;
-
+    // Players start drawing cards
     for (const [key, value] of Object.entries(hands)) {
-        //for 
+        if (Object.entries(hands).length < 2 || winners.length > 0) break;
+
         if (key != "Dealer") {
             while (checkHandScore(value) < 17) pickUpFromDeck(deck, hands, key);
             console.log(key);
@@ -93,20 +91,27 @@ function match(deck, players) {
             console.log(hands[key]);
         }
 
-        //if (checkHandScore(value) == 21) winners.push(key);
-        //if (checkHandScore(value) > 21) delete hands[key];
-        if (checkHandScore(value) == 21) {
-            winners.push(key);
-            break;
-        }
+        if (checkHandScore(value) > maxValue && checkHandScore(value) <= 21) maxValue = checkHandScore(value);
+        if (checkHandScore(value) == 21) winners.push(key);
         if (checkHandScore(value) > 21) delete hands[key];
-        if (Object.entries(hands).length < 2) break;
     }
 
-    console.log(winners);
-    //}
+    // Check who won
+    if (Object.entries(hands).length == 0) console.log("\nNobody wins");
+    else {
+        if (winners.length == 0) {
+            for (const [key, value] of Object.entries(hands)) {
+                if (checkHandScore(value) == maxValue) winners.push(key);
+            }
+        }
+
+        console.log("\n");
+        for (var i = 0; i < winners.length; i++) {
+            if (i + 1 < winners.length) console.log(winners[i] + " and ");
+            else console.log(winners[i] + " wins with a score of " + maxValue);
+        }
+    }
 
 }
 
 match(deck, players);
-//console.log(deck.length);
