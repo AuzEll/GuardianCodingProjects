@@ -61,7 +61,6 @@ function match(deck, players) {
         pickUpFromDeck(deck, hands, Object.keys(hands)[i]);
     }
 
-    console.log(Object.keys(deck).length);
     console.log(hands);
 
     // Initial check with opening hand
@@ -79,7 +78,7 @@ function match(deck, players) {
 
         if (key != "Dealer") {
             while (checkHandScore(value) < 17) pickUpFromDeck(deck, hands, key);
-            console.log(key);
+            console.log(key + ":");
             console.log(hands[key]);
         }
         else {
@@ -87,7 +86,7 @@ function match(deck, players) {
             while (competingPlayer == "Dealer" || !(competingPlayer in hands)) competingPlayer = players[Math.floor(Math.random() * players.length)];
 
             while (checkHandScore(value) <= checkHandScore(hands[competingPlayer])) pickUpFromDeck(deck, hands, key);
-            console.log(key);
+            console.log(key + ":");
             console.log(hands[key]);
         }
 
