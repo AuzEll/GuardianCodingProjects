@@ -25,23 +25,24 @@ function ongoingGame(grid) {
     var playerWins = false;
     var candidateTurn = true;
     var token;
+    //console.log(grid[-1][-1]);
 
     while (!playerWins) {
         var selectedColumn = "0";
 
-        while (parseInt(selectedColumn) < 1 || parseInt(selectedColumn) > width || isNaN(selectedColumn) || grid[0][selectedColumn - 1] != ".") {
+        while (parseInt(selectedColumn) < 1 || parseInt(selectedColumn) > grid[0].length || isNaN(selectedColumn) || grid[0][selectedColumn - 1] != ".") {
             switch (candidateTurn) {
                 case true:
-                    selectedColumn = prompt("Candidate's turn. Input a number between 1 and " + width + ": ");
+                    selectedColumn = prompt("Candidate's turn. Input a number between 1 and " + grid[0].length + ": ");
                     token = "x";
                     break;
                 case false:
-                    selectedColumn = prompt("Interviewer's turn. Input a number between 1 and " + width + ": ");
+                    selectedColumn = prompt("Interviewer's turn. Input a number between 1 and " + grid[0].length + ": ");
                     token = "o";
                     break;
             }
 
-            if (parseInt(selectedColumn) < 1 || parseInt(selectedColumn) > width || isNaN(selectedColumn)) console.log("Invalid input. Try again.");
+            if (parseInt(selectedColumn) < 1 || parseInt(selectedColumn) > grid[0].length || isNaN(selectedColumn)) console.log("Invalid input. Try again.");
             if (grid[0][selectedColumn - 1] != ".") console.log("That column is full. Try again.");
         }
 
@@ -58,6 +59,12 @@ function ongoingGame(grid) {
 
         printGridString(grid);
         candidateTurn = !candidateTurn;
+    }
+}
+
+function checkForConnection(grid, token) {
+    for (var i = 0; i < grid[0].length; i++) {
+
     }
 }
 
